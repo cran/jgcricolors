@@ -1,0 +1,208 @@
+## ---- include = FALSE---------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+
+## ---- eval=TRUE, warning=FALSE, message=FALSE---------------------------------
+library(jgcricolors)
+
+# See all available color palettes
+names(jgcricol())
+
+# Load a color palette
+mypal1 <- jgcricol()$pal_basic  # To load values only
+mypal2 <- jgcricol("pal_basic") # To see an example piechart and values
+
+
+## ---- eval=F, echo=T, warning=FALSE, message=FALSE----------------------------
+#  library(jgcricolors)
+#  library(ggplot2)
+#  
+#  # Set your palette
+#  mypal = jgcricol()$pal_all
+#  
+#  # Example categories for data to plot
+#  # Can replace these with any other GCAM technologies or classes as done in the subsequent figures.
+#  techs = c("a oil","a oil CCS","b natural gas","b natural gas CCS","c coal","c coal CCS",
+#      "d biomass","d biomass CCS","e nuclear","f hydro","g wind","h solar","i geothermal",
+#      "j traditional biomass","energy reduction")
+#  
+#  # Create data
+#  data <- data.frame(label=rep(techs,each=4), x=rep(c(1:4),length(techs)), value=runif(4*length(techs))) %>%
+#    mutate(label=as.factor(label))
+#  
+#  # Plot
+#    print(ggplot(data, aes(x=x,y=value, fill=label)) +
+#        geom_bar(position="stack", stat="identity", col="black",lwd=0.5) +
+#        scale_fill_manual(values=mypal[names(mypal) %in% techs]) +
+#        theme_bw() +
+#        xlab(NULL) +
+#        ylab(NULL) +
+#        ggtitle("Primary Energy"))
+#  
+
+## ---- eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE, results = 'asis'----
+library(jgcricolors)
+library(ggplot2)
+
+# Set your palette
+mypal = jgcricol()$pal_all
+
+# Example lists of different GCAM data
+listx <- list(
+  # Primary energy colors including CCS
+  `Primary energy` = c(
+    "a oil","a oil CCS","b natural gas","b natural gas CCS","c coal","c coal CCS",
+    "d biomass","d biomass CCS","e nuclear","f hydro","g wind","h solar","i geothermal",
+    "j traditional biomass","energy reduction"),
+  
+  `Elec gen by fuel` = c( "a Coal",
+      "b Coal w/CCS",
+      "c Gas",
+      "d Gas w/CCS",
+      "e Oil",
+      "f Oil w/CCS",
+      "g Biomass",
+      "h Biomass w/CCS",
+      "i Nuclear",
+      "j Geothermal",
+      "k Hydro",
+      "l Wind",
+      "m Solar",
+      "n CHP",
+      "o Battery",
+      "energy reduction"),
+  
+  `Elec by Tech` = c('biomass',
+      'coal',
+      'gas',
+      'geothermal',
+      'grid_storage',
+      'hydro',
+      'hydrogen',
+      'nuclear',
+      'refined liquids',
+      'rooftop_pv',
+      'solar',
+      'wind'),
+  
+  `Transport by fuel` = c( "liquids",
+      "gas",
+      "coal",
+      "biomass",
+      "electricity",
+      "hydrogen"),
+  
+  `Transport by tech` = c( 
+    "LDV",
+    "Bus",
+    "Rail",
+    "Plane",
+    "MotorBike",
+    "Truck",
+    "Ship",
+    "2W", 
+    "3W", 
+    "LHDT", 
+    "MHDT", 
+    "HHDT"),
+  
+    `AgLu by crop` = c( 'Biomass',
+      'Corn',
+      'FiberCrop',
+      'Fodder',
+      'Forest',
+      'Grass',
+      'MiscCrop',
+      'OilCrop',
+      'Other',
+      'PalmFruit',
+      'Pasture',
+      'Rice',
+      'RootTuber',
+      'Shrub',
+      'SugarCrop',
+      'Urban',
+      'Wheat'),
+  
+    `Water by sec` = c( 'agriculture',
+      'electricity',
+      'industry',
+      'livestock',
+      'mining',
+      'municipal'
+      )
+  
+    )
+              
+for(i in 1:length(listx)){
+  techs = listx[[i]]              
+  data <- data.frame(label=rep(techs,each=4), x=rep(c(1:4),length(techs)), value=runif(4*length(techs)))
+  cat("  \n##", names(listx[i]), "  \n")
+  print(ggplot(data, aes(x=x,y=value, fill=label)) +
+    geom_bar(position="stack", stat="identity",col="black",lwd=0.5) +
+    scale_fill_manual(values=mypal[names(mypal) %in% techs]) +
+    theme_bw() +
+    xlab(NULL) + ylab(NULL))
+  cat('<div class="clearer"></div>')
+}
+
+
+## ---- eval=T, warning=FALSE, message=FALSE------------------------------------
+library(jgcricolors)
+library(graphics)
+mypal1 <- jgcricol()$pal_basic  # To load silently
+names(mypal1) <- mypal1
+mypal2 = c(mypal1,"animal energy"="#FFF700", "human energy"="lawngreen")
+oldpar <- par()
+par(mfrow=c(1,2))
+par(mai = c(0.5, 0.5, 0.5, 0.5))
+pie(rep(1,length(mypal2)),label=names(mypal1),col=mypal1, main="Pal 1 w/ Missing Colors") # Plot as pie chart
+pie(rep(1,length(mypal2)),label=names(mypal2),col=mypal2, main="Pal 2 w/ Added Colors") # Plot as pie chart
+par(oldpar)
+
+## ---- echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE,results = 'asis'----
+library(jgcricolors)
+library(ggplot2)
+
+# See all available color palettes
+my_pals <- names(jgcricol())[!names(jgcricol()) %in% c("pal_all","pal_sankey")]
+ 
+for(i in my_pals){
+  mypal <- jgcricol()[[i]]
+  if(i != "pal_scarcityCat"){names(mypal) <- mypal}
+  mypal1 <- mypal
+  names(mypal1) <- NULL
+  cat("  \n##",  i, "  \n")
+  cat('<div class="column-left">')
+  oldpar <- par()
+  par(mai = c(0, 0, 0, 0))
+  pie(rep(1,length(mypal)),label=names(mypal),col=mypal)
+  cat('</div>')
+  cat('<div class="column-right">')
+  cat('<p></p>')
+  cat('<p></p>')
+
+  print(ggplot() +
+  geom_polygon(data =  jgcricolors::mapUS49df,
+               aes(x = long, y = lat, group = group, fill = subRegion),
+               colour = "gray10", lwd=0.5) +
+  scale_fill_manual(values=rep(mypal1,50)[1:length(unique(jgcricolors::mapUS49df$subRegion))]) +
+  theme_void() +
+  coord_fixed(ratio = 1.25) +
+  theme(legend.position = "none"))
+
+  cat('</div>')
+  cat('<div class="clearer"></div>')
+  par(oldpar)
+}
+
+## ---- eval=TRUE, warning=FALSE, message=FALSE---------------------------------
+library(RColorBrewer)
+library(graphics)
+getcol = colorRampPalette(brewer.pal(9, 'Pastel1')); 
+values=getcol(9);
+pie(rep(1,length(values)),label=names(values),col=values)
+
